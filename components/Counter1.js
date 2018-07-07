@@ -28,7 +28,8 @@ class Counter1 extends Component {
 
         {/*<button onClick={()=>store.dispatch({type:types.MINUS})}>-</button>*/}
         {/*<button onClick={() => store.dispatch(actions.minus())}>-</button>*/}
-        <button onClick={()=>this.props.minus1(1)}>-</button>
+        {/*<button onClick={()=>this.props.minus1(1)}>-</button>*/}
+        <button onClick={()=>this.props.thunk1(1)}>-</button>
       </div>
     )
   }

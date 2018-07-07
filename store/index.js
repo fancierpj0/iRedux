@@ -15,15 +15,32 @@ import {createStore} from '../redux';
 // };
 
 
-//定义一个redux中间件
+//在redux中，一个自定义中间件是这样定义的
 function logger(store){ //为了拿到状态
   return function(next){ //next就是原本的dispatch，为了链式调用
 
-    //狸猫换太子，新的dispatch方法
+    //狸猫换太子，返回一个新的dispatch方法
     return function(action){
       console.log('老值:', store.getState());
       next(action);
       console.log('新值', store.getState());
+    }
+  }
+}
+
+//实现异步处理中间件 thunk
+function thunk({dispatch,getState}){
+  return function(next){
+    return function(action){
+      //thunk就是专门用来处理action为函数的情况
+      //如果发过来的是action是一个函数，则让它执行
+      if(typeof action === 'function'){
+        action(dispatch,getState);
+
+      //如果不是一个函数，那么就不用处理，传递给下一个中间件(dispatch)
+      }else{
+        next(action);
+      }
     }
   }
 }
@@ -65,6 +82,7 @@ function applyMiddleware(_middleware){
   }
 }
 
-let store = applyMiddleware(logger)(createStore)(reducers);
+
+let store = applyMiddleware(thunk)(createStore)(reducers);
 
 export default store;
