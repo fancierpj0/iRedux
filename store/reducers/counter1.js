@@ -5,9 +5,10 @@ let initState = {number:0};
 export default function reducer(state = initState, action) {
   switch (action.type) {
     case types.ADD1:
-      return {number: state.counter1.number + action.payload};
+      console.log('state:',state)
+      return {number: state.number + action.payload};
     case types.MINUS1:
-      return {number: state.counter1.number - action.payload};
+      return {number: state.number - action.payload};
     default:
       return state;
   }

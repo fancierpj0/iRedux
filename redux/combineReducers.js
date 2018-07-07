@@ -9,7 +9,7 @@ export default function(reducers){
     let newState = {};
 
     //各 子reducer 算完后被封装进一同一个对象里 返回
-    //TODO 源码就是像下面这样全部跑一遍，若只想当派发的动作和reducer匹配时，对应的state才重新计算的话，可以在传递动作时，设置一个name，如果name和key相等时才重新计算(交给对应的reducer处理)；但这样组件依然会重新渲染，因为dispatch后所有listener都会执行一遍，So还要在那里修改
+    //TODO 源码就是像下面这样，一个action会在所有子reducer中全部跑一遍，若只想当派发的动作在它应该在的那个reducer中进行匹配和处理，可以在传递动作时，设置一个name，如果name和key相等时才会进入该子reducer；但这样组件依然会重新渲染，因为dispatch后所有listener都会执行一遍，So还要在那里修改
     for(let key in reducers){
 
       //newState['count1'] = reducers['count1'](state['count1]'],action)

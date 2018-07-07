@@ -19,9 +19,13 @@
 
 ->bindActionCreators.js (省去store.dispatch(actions.xx)的store.dispatch()，可直接在组件中给事件绑定actions.xx 作为监听函数)
 
-//TODO 此时虽然让不同的组件都可以拿到仓库里自己要的那部分数据了，但所有派发都是发给同一个reducer来处理的，这样当组件量多起来时，想要维护这个reducer就很难了，So，我们期望一个组件对应一个子reducer，这个子reducer只用来处理本组件的动作
+//TODO 此时虽然让不同的组件都可以拿到仓库里自己要的那部分数据了，但所有派发都是发给同一个reducer来处理的，这样当组件量多起来时，想要维护这个reducer就很难了，So，我们期望一个组件对应一个子reducer，这个子reducer只用来处理本组件的动作和state
 
 //但又由于redux应用的原则是，只能有一个state(reducer)
-//So把多个reducer合成一个
+//So分开写后最终还是要把多个reducer合成一个
 
--> combineReducers.js
+-> combineReducers.js (注意：每个reducer中只包含自己那份的state，即仓库的state的一部分)
+
+//TODO 此时不同组件依然存在大量重复代码，比如每个组件都要引入store,并且从store中取出自己要的数据，并将其置为自己的state，再比如都要订阅store，派发动作时必须要加`this.$store.dispatch`前缀
+
+-> react-redux/
