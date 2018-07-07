@@ -1,5 +1,6 @@
 export default function creteStore(reducer){
-  //声明state
+  // 声明state状态树
+  // state里的节点可以是任意类型
   let state
 
     , listeners = [];
@@ -18,12 +19,15 @@ export default function creteStore(reducer){
   */
 
   function dispatch(action){
+    //调用reducer进行处理，获取老的state，计算出新的state
     state = reducer(state,action);
+    //通知监听函数执行
     listeners.forEach(l => l());
   }
 
-
-  function subscribe(listener){
+  //组件可以订阅仓库的变化
+  //TODO 注意只要订阅，那么不管是什么状态变化，listener都会执行，而不是属于某个组件的sate变化才执行那个组件订阅的listener
+ function subscribe(listener){
     listeners.push(listener);
 
     //订阅后返回一个unsubscribe取消订阅函数
