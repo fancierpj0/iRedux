@@ -52,6 +52,29 @@ function thunk({dispatch,getState}){
   }
 }
 
+function promise({dispatch,getState}){
+  return function(next){
+    return function(action){
+      if(action.then && typeof action.then === 'function'){
+        action.then(dispatch);
+      }
+      else if(action.payload&&action.payload.then&&typeof action.payload.then === 'function'){
+        //此时payload为promise
+        action.payload.then(payload=>{
+          //此时payload为promise得到的值
+          dispatch({...action, payload});
+        },payload=>{
+          dispatch({...action, payload});
+        });
+      }
+      else{
+        next(action);
+      }
+    }
+  }
+}
+
+
 //实现中间件机制
 function applyMiddleware(_middleware){
   return function(createStore){
@@ -100,6 +123,6 @@ function applyMiddleware(_middleware){
 }
 
 //用经过thunk包装后的dispatch替换原本store里的dispatch
-let store = applyMiddleware(thunk)(createStore)(reducers);
+let store = applyMiddleware(promise)(createStore)(reducers);
 
 export default store;

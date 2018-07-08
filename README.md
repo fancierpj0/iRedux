@@ -32,3 +32,9 @@
 
 //TODO 中间件与异步处理
 
+->redux-thunk (action是个函数)
+
+->redux-promise (action是个promise)
+//TODO 此时只能处理成功不能处理失败，需要使用payloadPromise的写法
+
+->为redux-promise 增加异步payload支持

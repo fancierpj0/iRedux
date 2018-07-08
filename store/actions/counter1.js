@@ -23,4 +23,28 @@ export default {
       },2000);
     }
   }
+
+  ,promise1(payload){
+    return new Promise(function (resolve,reject) {
+      setTimeout(() => {
+        resolve({type:types.ADD1,payload})
+      },1000);
+    });
+  }
+
+  ,payloadPromise1(payload){
+    return {
+      type: types.ADD1
+      , payload: new Promise(function (resolve, reject) {
+        setTimeout(() => {
+          if(Math.random()>.5){
+            resolve(payload);
+          }else{
+            reject(-payload);
+          }
+        }, 1000);
+      })
+    };
+  }
+
 }

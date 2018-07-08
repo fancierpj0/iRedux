@@ -24,12 +24,15 @@ class Counter1 extends Component {
 
         {/*<button onClick={()=>store.dispatch({type:types.ADD})}>+</button>*/}
         {/*<button onClick={() => store.dispatch(actions.add())}>+</button>*/}
-        <button onClick={()=>this.props.add1(1)}>+</button>
+        {/*<button onClick={()=>this.props.add1(1)}>+</button>*/}
+        <button onClick={()=>this.props.promise1(1)}>+</button>
 
         {/*<button onClick={()=>store.dispatch({type:types.MINUS})}>-</button>*/}
         {/*<button onClick={() => store.dispatch(actions.minus())}>-</button>*/}
         {/*<button onClick={()=>this.props.minus1(1)}>-</button>*/}
         <button onClick={()=>this.props.thunk1(1)}>-</button>
+
+        <button onClick={()=>this.props.payloadPromise1(1)}>payloadPromise1</button>
       </div>
     )
   }
