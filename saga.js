@@ -1,12 +1,25 @@
 //从effects解构出来的这些都是副作用指令
-import {takeEvery,put,all} from 'redux-saga/effects';
+import {takeEvery,put,all,call} from 'redux-saga/effects';
 import * as types from './store/action-types';
+
+//ms 为毫秒数
+const delay = ms => new Promise(function (resolve, reject) {
+  setTimeout(function () {
+    resolve();
+  }, ms);
+});
 
 function* add(dispatch,action){
   // setTimeout(function () {
   //   console.log('dispatch')
   //   dispatch({type: types.ADD});
   // }, 2000);
+
+  // yield delay(2000);
+
+  //等同于上面
+  //类似于fn.call，告诉saga，让它帮忙执行一下delay函数，并传入参数
+  yield call(delay, 2000, 'a', 'b', 'c');
 
   yield put({type: types.ADD});
 }
@@ -55,5 +68,7 @@ export function* rootSaga() {
   //types.ADD_ASYNC 无法携带payload
   // yield takeEvery(types.ADD_ASYNC,add);
 
-  yield all([watchAdd(), watchLogger()]); //类似于promise.all
+  // yield all([watchAdd(), watchLogger()]); //类似于promise.all
+
+  yield watchAdd();
 }
