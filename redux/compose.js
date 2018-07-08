@@ -1,17 +1,17 @@
-function add1(str){
-  return 1 + str;
-}
-
-function add2(str){
-  return 2 + str;
-}
-
-function add3(str){
-  return 3 + str;
-}
+// function add1(str){
+//   return 1 + str;
+// }
+//
+// function add2(str){
+//   return 2 + str;
+// }
+//
+// function add3(str){
+//   return 3 + str;
+// }
 
 //TODO 如何让compose支持传进来的函数们可以接收两个以上的参数
-function sum(a,b){}
+// function sum(a,b){}
 
 // let ret = add1(add2(add3('ahhh')));
 // console.log(ret)
@@ -50,4 +50,9 @@ function compose(...fns){
    * 而此时x即为sum(...args)
    */
 }
+
+// let ret = compose(add1, add2, sum)('a', 'b');
+// console.log(ret);
+
+export default compose;
 

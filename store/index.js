@@ -1,7 +1,7 @@
 //TODO 54:00
 
 import reducers from './reducers';
-import {createStore} from '../redux';
+import {createStore,applyMiddleware} from '../redux';
 
 // let store = createStore(reducers);
 
@@ -76,53 +76,67 @@ function promise({dispatch,getState}){
 
 
 //实现中间件机制
-function applyMiddleware(_middleware){
-  return function(createStore){
-    return function (reducers) {
-      let middleware
-
-        //此dispatch方法永远指向最新的dispatch方法
-        , dispatch
-
-        //这就是原始的仓库
-        , store = createStore(reducers);
-
-      //【1】
-      middleware = _middleware({
-        getState: store.getState
-        , dispatch: action => dispatch(action) //此时dispatch为undefined，但在下面,【2】时被赋值
-      });
-
-      // middleware = _middleware(store);
-      // middleware就等于
-      //  ↓
-      // return function(next){ //next就是下面【2】中的store.dispatch，也就是原本的dispatch
-      //
-      //   return function(action){
-      //
-      //   }
-      // }
-
-      //【2】
-      dispatch = middleware(store.dispatch);
-      //dispatch就等于
-      //  ↓
-      // 新的dispatch方法
-      // return function(action){
-      //
-      // }
-
-      //此时的dispatch将接收一个新的dispatch(高阶函数最外面那层接收的store里的dispatch)，和一个旧的dispatch(未经过本次包装前的dispatch)
-
-      return {
-        ...store
-        ,dispatch
-      }
-    };
-  }
-}
+// function applyMiddleware(..._middlewares){
+//   return function(createStore){
+//     return function (reducers) {
+//
+//       //此dispatch方法永远指向最新的dispatch方法
+//       let dispatch
+//
+//         , middlewares
+//
+//         //这就是原始的仓库
+//         , store = createStore(reducers);
+//
+//
+//       //【1】
+//       middlewares = _middlewares.map(_middleware => _middleware({
+//         getState: store.getState
+//         , dispatch: action => dispatch(action) //此时dispatch为undefined，但在下面,【2】时被赋值；不能就简单的写成dispatch，因为这样写相当于dispatch:undefined，下面给dispatch重新赋值时就修改不到
+//       }));
+//
+//       // middleware = _middleware(store);
+//       // middleware就等于
+//       //    ↓
+//       //  ==↓==
+//       // return function(next){ //next就是下面【2】中的store.dispatch，也就是原本的dispatch
+//       //
+//       //   return function(action){
+//       //
+//       //   }
+//       // }
+//
+//       //【2】
+//       // dispatch = middleware(store.dispatch);
+//       dispatch = compose(...middlewares)(store.dispatch);
+//
+//       //dispatch就等于
+//       //    ↓
+//       //  ==↓==
+//       // 新的dispatch方法
+//       // return function(action){
+//       //
+//       // }
+//
+//       //此时的dispatch将接收一个新的dispatch(高阶函数最外面那层接收的store里的dispatch)，和一个旧的dispatch(未经过本次包装前的dispatch)
+//
+//       //本例中，logger中间件的next为原始的store.dispatch
+//       //thunk中间间的next为经过logger包装后的dispatch
+//       // 即 ↓
+//       // return (action){} 这一层
+//       //promise中间件的next为经过thunk中间包装后的dispatch
+//       //最终得到再次经过promise包装后的dispatch
+//
+//       return {
+//         ...store
+//         ,dispatch
+//       }
+//     };
+//   }
+// }
 
 //用经过thunk包装后的dispatch替换原本store里的dispatch
-let store = applyMiddleware(promise)(createStore)(reducers);
+//(...args)=>add1(add2(add3(...args)))
+let store = applyMiddleware(promise,thunk,logger)(createStore)(reducers);
 
 export default store;
