@@ -3,7 +3,7 @@ import compose from "./compose";
 
 function applyMiddleware(..._middlewares){
   return function(createStore){
-    return function (reducers) {
+    return function (reducers,initState) {
 
       //此dispatch方法永远指向最新的dispatch方法
       let dispatch
@@ -11,7 +11,7 @@ function applyMiddleware(..._middlewares){
         , middlewares
 
         //这就是原始的仓库
-        , store = createStore(reducers);
+        , store = createStore(reducers,initState);
 
 
       //【1】

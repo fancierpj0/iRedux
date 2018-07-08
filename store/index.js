@@ -137,6 +137,10 @@ function promise({dispatch,getState}){
 
 //用经过thunk包装后的dispatch替换原本store里的dispatch
 //(...args)=>add1(add2(add3(...args)))
-let store = applyMiddleware(promise,thunk,logger)(createStore)(reducers);
+// let store = applyMiddleware(promise,thunk,logger)(createStore)(reducers);
+
+//TODO 让createStore支持 中间件的初始化
+//第二个参数为初始状态，我们一般不在这里进行初始哈，而是在各个子reducer处初始化
+let store = createStore(reducers, {}, applyMiddleware(promise, thunk, logger));
 
 export default store;

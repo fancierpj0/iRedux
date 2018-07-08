@@ -1,7 +1,13 @@
-export default function creteStore(reducer){
+export default function createStore(reducer, initState, enhancer){
+  if(enhancer){
+    // applyMiddleware(promise,thunk,logger)(createStore)(reducers,initState);
+    // enhancer = applyMiddleware(promise,thunk,logger)
+    return enhancer(createStore)(reducer, initState);
+  }
+
   // 声明state状态树
   // state里的节点可以是任意类型
-  let state
+  let state = initState
 
     , listeners = [];
 
