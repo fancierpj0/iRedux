@@ -38,3 +38,31 @@
 //TODO 此时只能处理成功不能处理失败，需要使用payloadPromise的写法
 
 ->为redux-promise 增加异步payload支持
+
+->applyMiddleware 完全实现
+ 狸猫换太子(dispatch)，洋葱来一个(compose合成一个链式dispatch)
+
+### redux-saga
+redux-saga 是一个 redux 的中间件，而中间件的作用是为redux提供额外的功能。
+
+在reducers中所有操作都是同步的并且是纯粹的，即 reducer 都是纯函数，纯函数是指一个函数的返回结构只依赖于它的参数，并且在执行过程中不会对外部产生副作用，即给它传什么，就吐出什么
+
+但在实际的应用开发中，我们希望做一些异步的(如Ajax请求) 且不纯粹的操作(如改变外部的状态)，这些在函数式编程范式中被称为"副作用"
+
+>redux-saga 就是用来处理上述副作用(异步任务)的一个中间件，它是一个接受事件、并可能触发新事件的过程管理着，为你的应用管理复杂的流程
+
+#### 工作原理
+sagas 采用  Generator 函数来 yied Effects (包含指令的文本对象)
+
+Generator 函数的作用是可以暂停执行，再次执行的时候从上次暂停的地方继续执行
+
+Effect 是一个简单的对象，该对象包含了一些给middleware 解释执行的信息
+
+你可以通过使用 effects API 如 fork、call、take、put、cancel 来创建 Effect。
+
+#### redux-saga分工
+worker saga 做具体的工作，如调用API，进行异步请求、获取异步封装结果
+
+watcher saga 监听被dispatch的actions，当接收到action或则知道其被触发时，调用worker执行任务。
+
+root saga 立即启动saga的唯一入口

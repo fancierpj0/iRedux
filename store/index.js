@@ -1,7 +1,18 @@
-//TODO 54:00
-
 import reducers from './reducers';
-import {createStore,applyMiddleware} from '../redux';
+import {createStore, applyMiddleware} from '../redux';
+
+import createSagaMiddleware from 'redux-saga';
+import {rootSaga} from '../saga'
+//执行它可以得到中间间函数
+let sagaMiddleware = createSagaMiddleware();
+let store = applyMiddleware(sagaMiddleware)(createStore)(reducers);
+//rootSaga是一个生成器
+//开始执行生成器
+//store会被传入rootSaga生成器中
+//可以通过传递store，从而在saga中调用原生的派发
+//，也可以不传，使用saga为我们提供的put方法进行派发
+// sagaMiddleware.run(rootSaga,store);
+sagaMiddleware.run(rootSaga);
 
 // let store = createStore(reducers);
 
@@ -18,11 +29,11 @@ import {createStore,applyMiddleware} from '../redux';
 
 
 //在redux中，一个自定义中间件是这样定义的
-function logger(store){ //为了拿到状态
-  return function(next){ //next就是原本的dispatch，为了链式调用
+function logger(store) { //为了拿到状态
+  return function (next) { //next就是原本的dispatch，为了链式调用
 
     //狸猫换太子，返回一个新的dispatch方法
-    return function(action){
+    return function (action) {
       console.log('老值:', store.getState());
       next(action);
       console.log('新值', store.getState());
@@ -31,18 +42,18 @@ function logger(store){ //为了拿到状态
 }
 
 //实现异步处理中间件 thunk
-function thunk({dispatch,getState}){
-  return function(next){
+function thunk({dispatch, getState}) {
+  return function (next) {
 
     //新dispatch
-    return function(action){
+    return function (action) {
       //thunk就是专门用来处理action为函数的情况
       //如果发过来的是action是一个函数，则让它执行
-      if(typeof action === 'function'){
-        action(dispatch,getState);
+      if (typeof action === 'function') {
+        action(dispatch, getState);
 
-      //如果不是一个函数，那么就不用处理，传递给下一个中间件(dispatch)
-      }else{
+        //如果不是一个函数，那么就不用处理，传递给下一个中间件(dispatch)
+      } else {
         //这里，经过下面applyMiddleware的修改后，next不再能换成dispatch
         //，因为dispatch现在开始永远是最新的那个dispatch，而不再会存在为原本dispatch的情况
         //，而只有next会存在这种情况，next为上一次的dispatch
@@ -52,22 +63,22 @@ function thunk({dispatch,getState}){
   }
 }
 
-function promise({dispatch,getState}){
-  return function(next){
-    return function(action){
-      if(action.then && typeof action.then === 'function'){
+function promise({dispatch, getState}) {
+  return function (next) {
+    return function (action) {
+      if (action.then && typeof action.then === 'function') {
         action.then(dispatch);
       }
-      else if(action.payload&&action.payload.then&&typeof action.payload.then === 'function'){
+      else if (action.payload && action.payload.then && typeof action.payload.then === 'function') {
         //此时payload为promise
-        action.payload.then(payload=>{
+        action.payload.then(payload => {
           //此时payload为promise得到的值
           dispatch({...action, payload});
-        },payload=>{
+        }, payload => {
           dispatch({...action, payload});
         });
       }
-      else{
+      else {
         next(action);
       }
     }
@@ -141,6 +152,6 @@ function promise({dispatch,getState}){
 
 //TODO 让createStore支持 中间件的初始化
 //第二个参数为初始状态，我们一般不在这里进行初始哈，而是在各个子reducer处初始化
-let store = createStore(reducers, {}, applyMiddleware(promise, thunk, logger));
+// let store = createStore(reducers, {}, applyMiddleware(promise, thunk, logger));
 
 export default store;
