@@ -1,7 +1,7 @@
 import reducers from './reducers';
 import {createStore, applyMiddleware} from '../redux';
 
-import createSagaMiddleware from 'redux-saga';
+import createSagaMiddleware from '../redux-saga';
 import {rootSaga} from '../saga'
 //执行它可以得到中间间函数
 let sagaMiddleware = createSagaMiddleware();

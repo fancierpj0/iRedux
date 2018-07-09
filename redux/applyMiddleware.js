@@ -33,6 +33,9 @@ function applyMiddleware(..._middlewares){
 
       //【2】
       // dispatch = middleware(store.dispatch);
+      //middleware1のdsiaptch->
+      //(add1(add2(add3('a'))))
+      // 【middleware1のreturn function(next)】(【middleware2のreturn function(next)】(【middleware3のreturn function(next)】(store.dispatch)))
       dispatch = compose(...middlewares)(store.dispatch);
 
       //dispatch就等于

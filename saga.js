@@ -1,74 +1,42 @@
-//从effects解构出来的这些都是副作用指令
-import {takeEvery,put,all,call} from 'redux-saga/effects';
+import {take, put,takeEvery,call} from './redux-saga/effects';
 import * as types from './store/action-types';
 
-//ms 为毫秒数
+function* add(){
+  yield call(delay,1000);
+  yield put({type: types.ADD});
+}
+
 const delay = ms => new Promise(function (resolve, reject) {
   setTimeout(function () {
     resolve();
   }, ms);
 });
 
-function* add(dispatch,action){
-  // setTimeout(function () {
-  //   console.log('dispatch')
-  //   dispatch({type: types.ADD});
-  // }, 2000);
+export function* rootSaga(){
+  //表示等待一个动作发生，take监听的只会执行一次，即使动作再被重新派发，只要没有重新take都不会再监听
+  //只有当take监听的触发了，生成器才会继续往下走
 
-  // yield delay(2000);
+  // let action = yield take(types.ADD_ASYNC);
+  // yield put({type: types.ADD});
 
-  //等同于上面
-  //类似于fn.call，告诉saga，让它帮忙执行一下delay函数，并传入参数
-  yield call(delay, 2000, 'a', 'b', 'c');
+  //可点五次，有多少个take就可点几次，因为调用take会创造监听器，并且是一次性的
+  // for(let i=0;i<5;++i){
+  //   let action = yield take(types.ADD_ASYNC);
+  //   yield put({type: types.ADD});
+  // }
 
-  yield put({type: types.ADD});
+  //如果是takerEvery,takeEvery内部会递归调用两次【run】
+  yield  takeEvery(types.ADD_ASYNC, add);
+  //产出的是一个iterator，因为takerEvery是一个生成器
+  //  ↓
+  // function* takeEvery(actionType, worker) {
+  //   yield  fork(function* () {
+  //     while (true) {
+  //       let action = yield take(actionType);
+  //       yield worker(action);
+  //     }
+  //   });
+  // }
+  console.log('after TakerEvery,并不会阻塞往下运行');
 }
 
-//action在监听到的时就会自动传入
-//，并且作为最后一个参数传入
-function* logger(action){
-  console.log(action);
-}
-
-//saga分为三类:
-//1. rootSaga
-//2. 监听saga
-//3. worker-saga
-function* watchLogger(){
-  //监听任意动作
-  yield takeEvery('*',logger);
-}
-
-function* watchAdd(){
-  yield takeEvery(types.ADD_ASYNC,add);
-}
-
-//sagaMiddleware.run(rootSaga,store);
-// export function* rootSaga({getState,dispatch}) {
-//   console.log('rootSaga:saga start');
-//
-//   //监听派发给仓库的动作,如果动作类型匹配的话，会执行对应的监听生成器
-//   //,类似于订阅发布
-//   //,返回一个普通对象，被称之为Effect对象
-//   //ADD_ASYNC在reducer中并不存在
-//   //add后面的参数都会传递给add生成器
-//   //types.ADD_ASYNC 无法携带payload
-//   yield takeEvery(types.ADD_ASYNC,add,dispatch)
-// }
-
-//不传递store进来时
-export function* rootSaga() {
-  console.log('rootSaga:saga start');
-
-  //监听派发给仓库的动作,如果动作类型匹配的话，会执行对应的监听生成器
-  //,类似于订阅发布
-  //,返回一个普通对象，被称之为Effect对象
-  //ADD_ASYNC在reducer中并不存在
-  //add后面的参数都会传递给add生成器
-  //types.ADD_ASYNC 无法携带payload
-  // yield takeEvery(types.ADD_ASYNC,add);
-
-  // yield all([watchAdd(), watchLogger()]); //类似于promise.all
-
-  yield watchAdd();
-}
