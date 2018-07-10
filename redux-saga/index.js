@@ -1,6 +1,7 @@
 
 function createSagaMiddleware() {
   //sagaMiddleware只会执行一次，故无需担心run、createChannel函数被多次创建
+  //sagaMiddleware被applyMiddleware应用后才会有run方法
   function sagaMiddleware({getState, dispatch}) {
 
     function createChannel() {
@@ -32,6 +33,8 @@ function createSagaMiddleware() {
       let it = typeof generator === 'function' ? generator()
         // 说明已经是一个迭代器
         : generator;
+
+      next();
 
       function next(input) {
         // let action = yield take(types.ADD_ASYNC)
@@ -113,7 +116,6 @@ function createSagaMiddleware() {
 
       }
 
-      next();
     }
 
     sagaMiddleware.run = run;
