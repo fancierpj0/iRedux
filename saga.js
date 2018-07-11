@@ -27,6 +27,7 @@ export function* rootSaga(){
 
   //如果是takerEvery,takeEvery内部会递归调用两次【run】
   yield  takeEvery(types.ADD_ASYNC, add);
+
   //产出的是一个iterator，因为takerEvery是一个生成器
   //  ↓
   // function* takeEvery(actionType, worker) {
@@ -37,6 +38,6 @@ export function* rootSaga(){
   //     }
   //   });
   // }
+
   console.log('after TakerEvery,并不会阻塞往下运行');
 }
-

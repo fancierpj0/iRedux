@@ -10,6 +10,7 @@ function createSagaMiddleware() {
       let takers = {};
 
       function subscribe(actionType, cb) {
+        //如果是take，cb就是next，即生成器向下继续执行
         takers[actionType] = cb;
       }
 
@@ -122,10 +123,12 @@ function createSagaMiddleware() {
 
     return function (next) {
       return function (action) {
+        //会先让中间件往下执行再让saga继续执行
+        next(action);
+
         //taker,即listener，用一次就销毁
         //而生成器rootSaga只会执行一次
         channel.publish(action);
-        next(action);
       }
     }
 
