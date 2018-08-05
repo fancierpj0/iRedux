@@ -27,27 +27,42 @@
 //--->
 
 //可以接收任意参数
-// function compose(...fns){
-//   return function(...args){
-//     let last = fns.pop();
-//     return fns.reduceRight((val, fn) => fn(val),last(...args));
-//   }
+//dispatch = compose(...middlewares)(store.dispatch);
+//middleware(【也就是下面compose接收的fn】)为 【next】=>action=>{}，没错store已破，在之前的map中被狸猫换太子掉了
+
+// let logger = store => next => action => {
+//   console.log('老值:', store.getState());
+//   next(action);
+//   console.log('新值', store.getState());
 // }
 
+// function compose(...fns){
+//   return function(...args){ //这里的...args是剩余运算 [store.dispatch]
+//     let last = fns.pop();
+//     return fns.reduceRight((val, fn) => fn(va  l),last(...args)); //这里的...args是展开运算，是将[store.dispatch]展开 -> store.dispatch
+//   }
+// }
+//最后返回的是fn1,fn1的next接收的是fn2，fn2的next接收的是fn3
+
 //---> 超·精简&装逼版
-// let ret = add1(add2(sum('1','2')));
-function compose(...fns){
+// let ret = compose(add1, add2, add3)('ahhh');
+function compose(...fns) {
   return fns.reduce((a, b) => (...args) => a(b(...args)));
   /**
    * 第一次的时候 a=add1,b=add2
-   * =>
+   * 则reduce第一次运行结果为=>
    * (...args) => add1(add2(...args))
    *
    * 第二次的时候 a = (...args) => add1(add2(...args))
-   * ,b=sum
-   * =>
-   * (...args) => (x) => add1(add2(x))
-   * 而此时x即为sum(...args)
+   * 设这个a，即 (...args) => add1(add2(...args)) 为 fn
+   * 那么第二次结果为 (...args) => fn(b(...args))
+   * 可以看出，fn接收的结果为b(...args)
+   * 即 【b(...args)】 为 (【...args】) => add1(add2(...args)) ,fn 所接受的参数
+   * 这个参数为被包进args数组里，然后在 add1(add2(...args)) 中被展开
+   *
+   * 最后reducer的结果就变成了
+   * =>add1(add2(add3(...args)))
+   *
    */
 }
 

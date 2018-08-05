@@ -1,7 +1,7 @@
 export default function createStore(reducer, initState, enhancer){
   if(enhancer){
     // applyMiddleware(promise,thunk,logger)(createStore)(reducers,initState);
-    // enhancer = applyMiddleware(promise,thunk,logger)
+    //=> enhancer = applyMiddleware(promise,thunk,logger)
     return enhancer(createStore)(reducer, initState);
   }
 
