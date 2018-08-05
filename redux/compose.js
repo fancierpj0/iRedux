@@ -62,7 +62,9 @@ function compose(...fns) {
    *
    * 最后reducer的结果就变成了
    * =>add1(add2(add3(...args)))
+   * ，这里的...args 是展开运算，展开的是(...args) => add1(add2(add3(...args))) 的args，这个args就是[store.dispatch]，最终被展开传给add3执行时当做实参
    *
+   * =>mdw1(mdw2(mdw3(store.dispatch)))
    */
 }
 
