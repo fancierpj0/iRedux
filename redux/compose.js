@@ -58,12 +58,13 @@ function compose(...fns) {
    * 那么第二次结果为 (...args) => fn(b(...args))
    * 可以看出，fn接收的结果为b(...args)
    * 即 【b(...args)】 为 (【...args】) => add1(add2(...args)) ,fn 所接受的参数
-   * 这个参数为被包进args数组里，然后在 add1(add2(...args)) 中被展开
+   * 这个参数会被包进args数组里，然后在 add1(add2(...args)) 中被展开
    *
    * 最后reducer的结果就变成了
-   * =>add1(add2(add3(...args)))
-   * ，这里的...args 是展开运算，展开的是(...args) => add1(add2(add3(...args))) 的args，这个args就是[store.dispatch]，最终被展开传给add3执行时当做实参
+   * (...args) => add1(add2(add3(【...args】)))
+   * ，这里的...args 是展开运算，展开的是(【...args】) => add1(add2(add3(...args))) 的args，这个args就是[store.dispatch]，最终被展开传给add3执行时当做实参
    *
+   * dispatch = compose(...middlewares)(store.dispatch);
    * =>mdw1(mdw2(mdw3(store.dispatch)))
    */
 }
